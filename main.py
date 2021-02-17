@@ -1,102 +1,146 @@
 from math import ceil
-b = 3
+GLOBAL_ORDER = 3
 
 
-class InternalNode:
+class Node:
     def __init__(self):
-        self.data = []
+        self.keys = []
+        self.values = []  # this could be count of keys or pointer to child nodes
+        self.isLeaf: bool = False
+        self.parent: Node = None
+        self.nextLeaf: Node = None
 
-    def insert(self, ele):
+    def __repr__(self) -> str:
+        return 'keys: {}, values: {}.'.format(str(self.keys), str(self.values))
 
-        if len(self.data) < b*2-1:
+    def __str__(self) -> str:
+        return 'keys: {}, values: {}.'.format(str(self.keys), str(self.values))
 
-            if isinstance(self.data[0], LeafNode):
-                iinsert = 0
-                while iinsert+1<len(self.data) and self.data[iinsert+1]<=ele:
-                    iinsert += 2
-                
-                if len(self.data[iinsert].data)==b:
+    def leafInsert(self, ele: int):
+        if (self.keys == None) or len(self.keys) == 0:
+            self.keys = [ele]
+            self.values = [1]
+        else:
+            i = 0
+            while i < len(self.keys):
+                if ele == self.keys[i]:
+                    self.values[i] += 1
+                    i = len(self.keys) + 1
+                elif ele < self.keys[i]:
+                    self.keys = self.keys[:i] + [ele] + self.keys[i:]
+                    self.values = self.values[:i] + [1] + self.values[i:]
+                    i = len(self.keys) + 1
+                elif i == len(self.keys) - 1:
+                    self.keys.append(ele)
+                    self.values.append(1)
+                    i = len(self.keys) + 1
+                i += 1
 
-                    pass
-                else:
-                    pass
 
-            else:
-                pass
+class BPTree:
+    def __init__(self):
+        self.root = Node()
+        self.root.isLeaf = True
+
+    def commonInsert(self, ele):
+        leaf = self.getLeaf(ele)
+        leaf.leafInsert(ele)
+
+        if len(leaf.keys) == GLOBAL_ORDER:
+            mid = ceil((GLOBAL_ORDER - 1) / 2)
+            newLeaf = Node()
+            newLeaf.isLeaf = True
+            newLeaf.parent = leaf.parent
+            newLeaf.keys = leaf.keys[mid:]
+            newLeaf.values = leaf.values[mid:]
+            newLeaf.nextLeaf = leaf.nextLeaf
+            leaf.keys = leaf.keys[:mid]
+            leaf.values = leaf.values[:mid]
+            leaf.nextLeaf = newLeaf
+            # print(newLeaf)
+            # print(leaf)
+            self.intInsert(leaf, newLeaf, newLeaf.keys[0])
+
+    def intInsert(self, leftLeaf: Node, rightLeaf: Node, key: int):
+        if self.root == leftLeaf:
+            rootNode = Node()
+            rootNode.keys = [key]
+            rootNode.values = [leftLeaf, rightLeaf]
+            self.root = rootNode
+            leftLeaf.parent = rightLeaf.parent = self.root
 
         else:
-            
-            if isinstance(self.data[0], LeafNode):
-                pass
-            
-            else:
-                pass
-        pass
+            parNode = leftLeaf.parent
+            for i in range(len(parNode.values)):
+                if parNode.values[i] == leftLeaf:
+                    parNode.keys = parNode.keys[:i] + \
+                        [key] + parNode.keys[i:]
+                    parNode.values = parNode.values[:i+1] + \
+                        [rightLeaf] + parNode.values[i+1:]
+
+                    if len(parNode.keys) == GLOBAL_ORDER:
+                        newparent = Node()
+                        newparent.parent = parNode.parent
+                        mid = ceil((GLOBAL_ORDER-1)/2)
+                        newparent.keys = parNode.keys[mid+1:]
+                        newparent.values = parNode.values[mid+1:]
+                        midkey = parNode.keys[mid]
+                        parNode.keys = parNode.keys[:mid]
+                        parNode.values = parNode.values[:mid+1]
+                        for child in parNode.values:
+                            child.parent = parNode
+                        for child in newparent.values:
+                            child.parent = newparent
+                        self.intInsert(parNode, newparent, midkey)
+
+    def getLeaf(self, ele: int):
+        curNode = self.root
+        while not curNode.isLeaf:
+            # print(curNode)
+            i = 0
+            while i < len(curNode.keys):
+                if ele < curNode.keys[i]:
+                    curNode = curNode.values[i]
+                    i = len(curNode.keys) + 1
+                elif ele == curNode.keys[i]:
+                    curNode = curNode.values[i + 1]
+                    i = len(curNode.keys) + 1
+                elif i == len(curNode.keys) - 1:
+                    # print(i)
+                    # print(len(curNode.values))
+                    curNode = curNode.values[i + 1]
+                    i = len(curNode.keys) + 1
+                i += 1
+        return curNode
+
+    def find(self, ele):
+        leaf = self.getLeaf(ele)
+        for i in range(len(leaf.keys)):
+            if leaf.keys[i] == ele:
+                return True
+        return False
+
+    def printTree(self):
+        print(self.root)
 
 
-class LeafNode:
-    def __init__(self):
-        self.data = []
-        self.data.append(None)
-        self.parent = None
+mytree = BPTree()
+mytree.commonInsert(5)
+# mytree.printTree()
+mytree.commonInsert(15)
+# mytree.printTree()
+mytree.commonInsert(25)
+# mytree.printTree()
+mytree.commonInsert(35)
+# mytree.printTree()
+mytree.commonInsert(45)
+mytree.printTree()
 
-    def __repr__(self):
-        return str(self.data)
-
-    def insert(self, ele):
-        present = self.elepresent(ele)
-        if present == -1:
-            if len(self.data) < b:
-
-                self.data.insert(0, [ele, 1])
-                self.data[:-1] = sorted(self.data[:-1], key=lambda x: x[0])
-
-            else:
-                # get a new leafnode and adjust stuff appropriately
-                if self.parent==None:
-                    il = ceil((b-1)/2)
-                    self.data[-1] = LeafNode()
-                    for i in range(il, len(self.data)-1):
-                        self.data[-1].data.insert(0, self.data[i])
-                    newdata = []
-                    for i in range(il):
-                        newdata.append(self.data[i])
-                    newdata.append(self.data[-1])
-                    self.data = newdata
-                    self.data[:-1] = sorted(self.data[:-1], key=lambda x: x[0])
-
-                    newInode = InternalNode()
-                    newInode.data.append(self)
-                    newInode.data.append(self.data[-1].data[0][0])
-                    newInode.data.append(self.data[-1])
-                    self.parent = newInode
-
-                    return newInode
-                else:
-                    pass
-
-        else:
-            self.data[present][1] += 1
-        return self
-
-    def elepresent(self, ele):
-        for i in range(len(self.data)-1):
-            if self.data[i][0] == ele:
-                return i
-        return -1
-
-
-class BPlusTree:
-    def __init__(self):
-        self.root = LeafNode()
-
-    def insert(self, ele):
-        self.root = self.root.insert(ele)
-        print(self.root.data)
-        pass
-
-
-mytree = BPlusTree()
-mytree.insert(6)
-mytree.insert(16)
-mytree.insert(26)
+print(mytree.find(5))
+print(mytree.find(15))
+print(mytree.find(25))
+print(mytree.find(35))
+print(mytree.find(45))
+print(mytree.find(55))
+print(mytree.find(100))
+print(mytree.find(1))
