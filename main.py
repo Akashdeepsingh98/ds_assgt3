@@ -113,6 +113,13 @@ class BPTree:
                 i += 1
         return curNode
 
+    def count(self, ele):
+        leaf = self.getLeaf(ele)
+        for i in range(len(leaf.keys)):
+            if leaf.keys[i] == ele:
+                return leaf.values[i]
+        return 0
+
     def find(self, ele):
         leaf = self.getLeaf(ele)
         for i in range(len(leaf.keys)):
@@ -126,21 +133,19 @@ class BPTree:
 
 mytree = BPTree()
 mytree.commonInsert(5)
-# mytree.printTree()
 mytree.commonInsert(15)
-# mytree.printTree()
 mytree.commonInsert(25)
-# mytree.printTree()
 mytree.commonInsert(35)
-# mytree.printTree()
 mytree.commonInsert(45)
-mytree.printTree()
+mytree.commonInsert(5)
+mytree.commonInsert(35)
+mytree.commonInsert(45)
+mytree.commonInsert(45)
 
-print(mytree.find(5))
-print(mytree.find(15))
-print(mytree.find(25))
-print(mytree.find(35))
-print(mytree.find(45))
-print(mytree.find(55))
-print(mytree.find(100))
-print(mytree.find(1))
+print(mytree.count(5))
+print(mytree.count(15))
+print(mytree.count(25))
+print(mytree.count(35))
+print(mytree.count(45))
+print(mytree.count(55))
+print(mytree.count(-5))
