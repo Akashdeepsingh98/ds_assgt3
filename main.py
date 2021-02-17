@@ -41,8 +41,14 @@ class BPTree:
     def __init__(self):
         self.root = Node()
         self.root.isLeaf = True
+        self.mn = None
+        self.mx = None
 
     def commonInsert(self, ele):
+        if (self.mn == None) or ele < self.mn:
+            self.mn = ele
+        if (self.mx == None) or ele > self.mx:
+            self.mx = ele
         leaf = self.getLeaf(ele)
         leaf.leafInsert(ele)
 
@@ -60,6 +66,45 @@ class BPTree:
             # print(newLeaf)
             # print(leaf)
             self.intInsert(leaf, newLeaf, newLeaf.keys[0])
+
+    def range(self, low, high):
+        if high < self.mn or low > self.mx:
+            return 0
+
+        if low < self.mn:
+            low = self.mn
+        if high > self.mx:
+            high = self.mx
+
+        leaf1 = self.getLeaf(low)
+        leaf2 = self.getLeaf(high)
+
+        li, hi = None, None
+
+        # work on li and hi
+
+        while li < len(leaf1.keys) and leaf1.keys[li] < low:
+            li += 1
+
+        while hi < len(leaf2.keys) and leaf2.keys[hi] < high:
+            hi += 1
+
+        if hi < len(leaf2.keys) and leaf2.keys[hi] != high:
+            hi -= 1
+        elif hi >= len(leaf2.keys):
+            hi = -1
+
+        curLeaf = leaf1
+        total = len(leaf1.keys) - li
+        # print(total)
+        curLeaf = leaf1.nextLeaf
+        while curLeaf != leaf2:
+            total += len(curLeaf.keys)
+            curLeaf = curLeaf.nextLeaf
+        # print(total)
+        total += hi + 1
+        # print(total)
+        return total
 
     def intInsert(self, leftLeaf: Node, rightLeaf: Node, key: int):
         if self.root == leftLeaf:
@@ -93,7 +138,7 @@ class BPTree:
                             child.parent = newparent
                         self.intInsert(parNode, newparent, midkey)
 
-    def getLeaf(self, ele: int):
+    def getLeaf(self, ele: int) -> Node:
         curNode = self.root
         while not curNode.isLeaf:
             # print(curNode)
@@ -141,11 +186,14 @@ mytree.commonInsert(5)
 mytree.commonInsert(35)
 mytree.commonInsert(45)
 mytree.commonInsert(45)
+mytree.printTree()
 
-print(mytree.count(5))
-print(mytree.count(15))
-print(mytree.count(25))
-print(mytree.count(35))
-print(mytree.count(45))
-print(mytree.count(55))
-print(mytree.count(-5))
+# print(mytree.count(5))
+# print(mytree.count(15))
+# print(mytree.count(25))
+# print(mytree.count(35))
+# print(mytree.count(45))
+# print(mytree.count(55))
+# print(mytree.count(-5))
+
+print(mytree.range(24, 34))
