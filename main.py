@@ -78,32 +78,39 @@ class BPTree:
 
         leaf1 = self.getLeaf(low)
         leaf2 = self.getLeaf(high)
+        print(leaf1)
+        print(leaf2)
 
-        li, hi = None, None
+        li, hi = 0, len(leaf2.keys)-1
 
-        # work on li and hi
+        total = 0
 
-        while li < len(leaf1.keys) and leaf1.keys[li] < low:
-            li += 1
+        if leaf1 != leaf2:
+            curLeaf = leaf1.nextLeaf
+            while curLeaf != leaf2 and curLeaf != None:
+                total += len(curLeaf.keys)
+                curLeaf = curLeaf.nextLeaf
 
-        while hi < len(leaf2.keys) and leaf2.keys[hi] < high:
-            hi += 1
+        if low <= leaf1.keys[0]:
+            low = leaf1.keys[0]
+            li = 0
+        else:
+            while li < len(leaf1.keys) and leaf1.keys[li] < low:
+                li += 1
 
-        if hi < len(leaf2.keys) and leaf2.keys[hi] != high:
-            hi -= 1
-        elif hi >= len(leaf2.keys):
-            hi = -1
+        if high >= leaf2.keys[-1]:
+            high = leaf2.keys[-1]
+            hi = len(leaf2.keys)-1
+        else:
+            while hi > -1 and leaf2.keys[hi] > high:
+                hi -= 1
 
-        curLeaf = leaf1
-        total = len(leaf1.keys) - li
-        # print(total)
-        curLeaf = leaf1.nextLeaf
-        while curLeaf != leaf2:
-            total += len(curLeaf.keys)
-            curLeaf = curLeaf.nextLeaf
-        # print(total)
-        total += hi + 1
-        # print(total)
+        if leaf1 == leaf2:
+            total += hi - li + 1
+        else:
+            total += len(leaf1.keys) - li
+            total += hi+1
+
         return total
 
     def intInsert(self, leftLeaf: Node, rightLeaf: Node, key: int):
@@ -196,4 +203,4 @@ mytree.printTree()
 # print(mytree.count(55))
 # print(mytree.count(-5))
 
-print(mytree.range(24, 34))
+print(mytree.range(30, 40))
