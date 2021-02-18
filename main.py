@@ -1,11 +1,12 @@
 from math import ceil
+import sys
 GLOBAL_ORDER = 3
 
 
 class Node:
     def __init__(self):
         self.keys = []
-        self.values = []  # this could be count of keys or pointer to child nodes
+        self.values = []  # this could be count of keys OR pointer to child nodes
         self.isLeaf: bool = False
         self.parent: Node = None
         self.nextLeaf: Node = None
@@ -78,8 +79,6 @@ class BPTree:
 
         leaf1 = self.getLeaf(low)
         leaf2 = self.getLeaf(high)
-        print(leaf1)
-        print(leaf2)
 
         li, hi = 0, len(leaf2.keys)-1
 
@@ -183,24 +182,31 @@ class BPTree:
         print(self.root)
 
 
-mytree = BPTree()
-mytree.commonInsert(5)
-mytree.commonInsert(15)
-mytree.commonInsert(25)
-mytree.commonInsert(35)
-mytree.commonInsert(45)
-mytree.commonInsert(5)
-mytree.commonInsert(35)
-mytree.commonInsert(45)
-mytree.commonInsert(45)
-mytree.printTree()
+def main():
+    mytree = BPTree()
+    filename = sys.argv[1]
+    command_file = open(filename, 'r')
+    while True:
+        command = command_file.readline()
+        if not command:
+            break
+        command = command.strip().split(' ')
 
-# print(mytree.count(5))
-# print(mytree.count(15))
-# print(mytree.count(25))
-# print(mytree.count(35))
-# print(mytree.count(45))
-# print(mytree.count(55))
-# print(mytree.count(-5))
+        if command[0].lower() == 'insert':
+            mytree.commonInsert(int(command[1]))
 
-print(mytree.range(30, 40))
+        elif command[0].lower() == 'find':
+            if mytree.find(int(command[1])):
+                print('YES')
+            else:
+                print('NO')
+
+        elif command[0].lower() == 'count':
+            print(mytree.count(int(command[1])))
+
+        elif command[0].lower() == 'range':
+            print(mytree.range(int(command[1]), int(command[2])))
+
+
+if __name__ == '__main__':
+    main()
