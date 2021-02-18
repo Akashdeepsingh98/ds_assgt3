@@ -45,7 +45,7 @@ class BPTree:
         self.mn = None
         self.mx = None
 
-    def commonInsert(self, ele):
+    def commonInsert(self, ele: int):
         if (self.mn == None) or ele < self.mn:
             self.mn = ele
         if (self.mx == None) or ele > self.mx:
@@ -68,7 +68,7 @@ class BPTree:
             # print(leaf)
             self.intInsert(leaf, newLeaf, newLeaf.keys[0])
 
-    def range(self, low, high):
+    def range(self, low: int, high: int) -> int:
         if high < self.mn or low > self.mx:
             return 0
 
@@ -164,14 +164,14 @@ class BPTree:
                 i += 1
         return curNode
 
-    def count(self, ele):
+    def count(self, ele: int) -> int:
         leaf = self.getLeaf(ele)
         for i in range(len(leaf.keys)):
             if leaf.keys[i] == ele:
                 return leaf.values[i]
         return 0
 
-    def find(self, ele):
+    def find(self, ele: int) -> bool:
         leaf = self.getLeaf(ele)
         for i in range(len(leaf.keys)):
             if leaf.keys[i] == ele:
