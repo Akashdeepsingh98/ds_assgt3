@@ -69,6 +69,8 @@ class BPTree:
             self.intInsert(leaf, newLeaf, newLeaf.keys[0])
 
     def range(self, low: int, high: int) -> int:
+        if self.mn == None or self.mx == None:
+            return 0
         if high < self.mn or low > self.mx:
             return 0
 
@@ -165,6 +167,8 @@ class BPTree:
         return curNode
 
     def count(self, ele: int) -> int:
+        if self.mn == None or self.mx == None:
+            return 0
         leaf = self.getLeaf(ele)
         for i in range(len(leaf.keys)):
             if leaf.keys[i] == ele:
@@ -172,6 +176,8 @@ class BPTree:
         return 0
 
     def find(self, ele: int) -> bool:
+        if self.mn == None or self.mx == None:
+            return False
         leaf = self.getLeaf(ele)
         for i in range(len(leaf.keys)):
             if leaf.keys[i] == ele:
@@ -206,7 +212,8 @@ def main():
             resultfile.write(str(mytree.count(int(command[1])))+'\n')
 
         elif command[0].lower() == 'range':
-            resultfile.write(str(mytree.range(int(command[1]), int(command[2])))+'\n')
+            resultfile.write(
+                str(mytree.range(int(command[1]), int(command[2])))+'\n')
 
     command_file.close()
     resultfile.close()

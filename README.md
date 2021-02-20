@@ -10,3 +10,6 @@
 - Run it with command like this: `python main.py <filename>`.
 - The `range` function prints `number of distinct elements` in the B+ tree in given range, so duplicates are not counted.
 - Output results are stored in `2020201051output.txt`.
+- The `special case` of running range, count or find command on an empty tree is also handled:
+    - Range and Count commands will output 0.
+    - Find command will output 'NO'.
