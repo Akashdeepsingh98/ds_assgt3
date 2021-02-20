@@ -184,6 +184,7 @@ class BPTree:
 
 def main():
     mytree = BPTree()
+    resultfile = open('2020201051output.txt', 'w')
     filename = sys.argv[1]
     command_file = open(filename, 'r')
     while True:
@@ -197,15 +198,18 @@ def main():
 
         elif command[0].lower() == 'find':
             if mytree.find(int(command[1])):
-                print('YES')
+                resultfile.write('YES\n')
             else:
-                print('NO')
+                resultfile.write('NO\n')
 
         elif command[0].lower() == 'count':
-            print(mytree.count(int(command[1])))
+            resultfile.write(str(mytree.count(int(command[1])))+'\n')
 
         elif command[0].lower() == 'range':
-            print(mytree.range(int(command[1]), int(command[2])))
+            resultfile.write(str(mytree.range(int(command[1]), int(command[2])))+'\n')
+
+    command_file.close()
+    resultfile.close()
 
 
 if __name__ == '__main__':

@@ -8,4 +8,5 @@
 - I have used type hints for the sake of readability for variables and functions, so `please use Python 3.5+`.
 - I have used `Python 3.6`.
 - Run it with command like this: `python main.py <filename>`.
-- The `range` function prints `number of distinct elements` in the B+ tree in given range.
+- The `range` function prints `number of distinct elements` in the B+ tree in given range, so duplicates are not counted.
+- Output results are stored in `2020201051output.txt`.
